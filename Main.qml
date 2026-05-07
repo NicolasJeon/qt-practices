@@ -32,7 +32,7 @@ Window {
             width: parent.width - 48
             height: parent.height - 160
             color: "#111418"
-            border.color: "#3b414a"
+            border.color: window.statusColor
 
             Text {
                 anchors.centerIn: parent
@@ -55,6 +55,28 @@ Window {
                 text: window.statusText
                 color: "white"
                 font.pixelSize: 18
+            }
+        }
+
+        Rectangle {
+            x: 220
+            y: parent.height - 64
+            width: 160
+            height: 40
+            radius: 4
+            color: toggleArea.pressed ? "#49515d" : "#2f6f9e"
+
+            Text {
+                anchors.centerIn: parent
+                text: "Toggle Alert"
+                color: "white"
+                font.pixelSize: 16
+            }
+
+            MouseArea {
+                id: toggleArea
+                anchors.fill: parent
+                onClicked: window.warning = !window.warning
             }
         }
     }
