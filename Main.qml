@@ -1,6 +1,7 @@
 import QtQuick
+import QtQuick.Controls
 
-Window {
+ApplicationWindow {
     id: window
     width: 900
     height: 540
@@ -16,7 +17,7 @@ Window {
         anchors.fill: parent
         color: "#20242a"
 
-        Text {
+        Label {
             id: titleText
             x: 24
             y: 20
@@ -78,6 +79,15 @@ Window {
                 anchors.fill: parent
                 onClicked: window.warning = !window.warning
             }
+        }
+
+        Button {
+            x: 396
+            y: parent.height - 64
+            width: 140
+            height: 40
+            text: "Set Normal"
+            onClicked: window.warning = false
         }
     }
 }
