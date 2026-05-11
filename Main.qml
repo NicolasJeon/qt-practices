@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQml
+import QtQml.Models
 
 ApplicationWindow {
     id: window
@@ -10,7 +11,17 @@ ApplicationWindow {
     visible: true
     title: "Equipment Monitor"
 
-    property string cameraName: "Camera 01"
+    ListModel {
+        id: cameraModel
+
+        ListElement { camera: "Camera 01"; location: "Line A"; cameraState: "NORMAL" }
+        ListElement { camera: "Camera 02"; location: "Line B"; cameraState: "NORMAL" }
+        ListElement { camera: "Camera 03"; location: "Line C"; cameraState: "WARNING" }
+    }
+
+    property int selectedCamera: 0
+    property string cameraName: cameraModel.get(selectedCamera).camera
+    property string cameraLocation: cameraModel.get(selectedCamera).location
     property bool warning: false
     property string statusText: warning ? "WARNING" : "NORMAL"
     property color statusColor: warning ? colors.statusWarning : colors.statusNormal
@@ -26,6 +37,18 @@ ApplicationWindow {
         readonly property color statusWarning: "#d94848"
         readonly property color buttonNormal: "#2f6f9e"
         readonly property color buttonPressed: "#49515d"
+        readonly property color buttonWarning: "#7f3b3b"
+    }
+
+    function selectCamera(index) {
+        var camera = cameraModel.get(index)
+        selectedCamera = index
+        warning = camera.cameraState === "WARNING"
+    }
+
+    function setWarning(value) {
+        warning = value
+        cameraModel.setProperty(selectedCamera, "cameraState", value ? "WARNING" : "NORMAL")
     }
 
     Rectangle {
@@ -164,6 +187,7 @@ ApplicationWindow {
                     Layout.fillHeight: true
                     statusText: window.statusText
                     statusColor: window.statusColor
+                    lineName: window.cameraLocation
                     backgroundColor: colors.panelBackground
                     textColor: colors.textPrimary
                     secondaryTextColor: colors.textSecondary
@@ -180,14 +204,28 @@ ApplicationWindow {
                     normalColor: colors.buttonNormal
                     pressedColor: colors.buttonPressed
                     textColor: colors.textPrimary
-                    onClicked: window.warning = !window.warning
+                    onClicked: window.setWarning(!window.warning)
                 }
 
                 Button {
                     width: 140
                     height: 40
                     text: "Set Normal"
-                    onClicked: window.warning = false
+                    onClicked: window.setWarning(false)
+                }
+
+                Repeater {
+                    model: cameraModel
+
+                    delegate: MonitorButton {
+
+                        label: camera
+                        normalColor: index === window.selectedCamera ? colors.buttonNormal :
+                                     cameraState === "WARNING" ? colors.buttonWarning : colors.buttonPressed
+                        pressedColor: colors.buttonPressed
+                        textColor: colors.textPrimary
+                        onClicked: window.selectCamera(index)
+                    }
                 }
             }
         }
