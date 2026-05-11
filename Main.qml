@@ -6,8 +6,8 @@ import QtQml.Models
 
 ApplicationWindow {
     id: window
-    width: 900
-    height: 540
+    width: 1024
+    height: 600
     visible: true
     title: "Equipment Monitor"
 
@@ -17,6 +17,14 @@ ApplicationWindow {
         ListElement { camera: "Camera 01"; location: "Line A"; cameraState: "NORMAL" }
         ListElement { camera: "Camera 02"; location: "Line B"; cameraState: "NORMAL" }
         ListElement { camera: "Camera 03"; location: "Line C"; cameraState: "WARNING" }
+    }
+
+    ListModel {
+        id: eventLogModel
+
+        ListElement { time: "13:00:00"; level: "INFO"; message: "Camera 01 stream connected" }
+        ListElement { time: "13:04:18"; level: "INFO"; message: "Camera 02 stream connected" }
+        ListElement { time: "13:12:43"; level: "WARN"; message: "Camera 03 signal unstable" }
     }
 
     property int selectedCamera: 0
@@ -41,14 +49,34 @@ ApplicationWindow {
     }
 
     function selectCamera(index) {
-        var camera = cameraModel.get(index)
+        if (selectedCamera === index)
+            return
+
+        var camera = cameraModel.get(index).camera
         selectedCamera = index
-        warning = camera.cameraState === "WARNING"
+        warning = cameraModel.get(index).cameraState === "WARNING"
+        addEvent("INFO", camera + " selected")
     }
 
     function setWarning(value) {
+        if (warning === value)
+            return
+
         warning = value
         cameraModel.setProperty(selectedCamera, "cameraState", value ? "WARNING" : "NORMAL")
+        addEvent(value ? "WARN" : "INFO",
+                 cameraName + (value ? " warning detected" : " returned to normal"))
+    }
+
+    function addEvent(level, message) {
+        eventLogModel.insert(0, {
+            "time": Qt.formatTime(new Date(), "hh:mm:ss"),
+            "level": level,
+            "message": message
+        })
+
+        if (eventLogModel.count > 8)
+            eventLogModel.remove(eventLogModel.count - 1)
     }
 
     Rectangle {
@@ -182,15 +210,28 @@ ApplicationWindow {
                 }
 
 
-                StatusCard {
-                    Layout.preferredWidth: 220
+                ColumnLayout {
+                    Layout.fillWidth: false
+                    Layout.minimumWidth: 360
                     Layout.fillHeight: true
-                    statusText: window.statusText
-                    statusColor: window.statusColor
-                    lineName: window.cameraLocation
-                    backgroundColor: colors.panelBackground
-                    textColor: colors.textPrimary
-                    secondaryTextColor: colors.textSecondary
+                    spacing: 16
+
+                    StatusCard {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 180
+                        statusText: window.statusText
+                        statusColor: window.statusColor
+                        lineName: window.cameraLocation
+                        backgroundColor: colors.panelBackground
+                        textColor: colors.textPrimary
+                        secondaryTextColor: colors.textSecondary
+                    }
+
+                    EventLogPanel {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        model: eventLogModel
+                    }
                 }
             }
 
