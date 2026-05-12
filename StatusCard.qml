@@ -32,6 +32,18 @@ Rectangle {
             height: 44
             radius: 4
             color: root.statusColor
+            scale: root.statusText === "WARNING" ? 1.04 : 1.0
+
+            Behavior on color {
+                ColorAnimation { duration: 220 }
+            }
+
+            Behavior on scale {
+                NumberAnimation {
+                    duration: 180
+                    easing.type: Easing.OutCubic
+                }
+            }
 
             Text {
                 anchors.centerIn: parent

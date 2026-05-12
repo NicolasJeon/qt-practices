@@ -60,6 +60,72 @@ ApplicationWindow {
                         border.width: window.warning ? 4 : 2
                         clip: true
 
+                        property real statusOpacity: 0.06
+                        property bool blinkOn: false
+
+                        Timer {
+                            interval: 500
+                            running: window.warning
+                            repeat: true
+                            onTriggered: videoArea.blinkOn = !videoArea.blinkOn
+                            onRunningChanged: {
+                                if (!running)
+                                    videoArea.blinkOn = false
+                            }
+                        }
+
+                        states: [
+                            State {
+                                name: "warning"
+                                when: window.warning
+                                PropertyChanges {
+                                    videoArea.statusOpacity: 0.22
+                                }
+                            }
+                        ]
+
+                        transitions: [
+                            Transition {
+                                NumberAnimation {
+                                    property: "statusOpacity"
+                                    duration: 220
+                                    easing.type: Easing.OutCubic
+                                }
+                            }
+                        ]
+
+                        Rectangle {
+                            anchors.fill: parent
+                            color: window.statusColor
+                            opacity: videoArea.statusOpacity
+
+                            Behavior on color {
+                                ColorAnimation { duration: 220 }
+                            }
+                        }
+
+                        Rectangle {
+                            anchors.top: parent.top
+                            anchors.right: parent.right
+                            anchors.margins: 18
+                            width: 18
+                            height: 18
+                            radius: 9
+                            color: window.statusColor
+                            opacity: videoArea.blinkOn ? 1.0 : 0.35
+
+                            Behavior on color {
+                                ColorAnimation { duration: 220 }
+                            }
+
+                            Behavior on opacity {
+                                NumberAnimation {
+                                    duration: 180
+                                    easing.type: Easing.InOutQuad
+                                }
+                            }
+                        }
+
                         Column {
                             anchors.centerIn: parent
                             spacing: 8
@@ -76,6 +142,10 @@ ApplicationWindow {
                                 text: window.statusText
                                 color: window.statusColor
                                 font.pixelSize: 18
+
+                                Behavior on color {
+                                    ColorAnimation { duration: 220 }
+                                }
                             }
                         }
                     }
