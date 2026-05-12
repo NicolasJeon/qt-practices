@@ -16,6 +16,8 @@ qt_add_qml_module(appday2
     URI day2
     QML_FILES
         Main.qml
+        MonitorButton.qml
+        StatusCard.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
