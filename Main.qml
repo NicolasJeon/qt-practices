@@ -14,17 +14,17 @@ ApplicationWindow {
     ListModel {
         id: cameraModel
 
-        ListElement { camera: "Camera 01"; location: "Line A"; cameraState: "NORMAL" }
-        ListElement { camera: "Camera 02"; location: "Line B"; cameraState: "NORMAL" }
-        ListElement { camera: "Camera 03"; location: "Line C"; cameraState: "WARNING" }
+        ListElement { camera: "Camera 01"; location: "Line A"; cameraState: MonitorEnums.CameraState.Normal }
+        ListElement { camera: "Camera 02"; location: "Line B"; cameraState: MonitorEnums.CameraState.Normal }
+        ListElement { camera: "Camera 03"; location: "Line C"; cameraState: MonitorEnums.CameraState.Warning }
     }
 
     ListModel {
         id: eventLogModel
 
-        ListElement { time: "13:00:00"; level: "INFO"; message: "Camera 01 stream connected" }
-        ListElement { time: "13:04:18"; level: "INFO"; message: "Camera 02 stream connected" }
-        ListElement { time: "13:12:43"; level: "WARN"; message: "Camera 03 signal unstable" }
+        ListElement { time: "13:00:00"; level: MonitorEnums.EventLevel.Info; message: "Camera 01 stream connected" }
+        ListElement { time: "13:04:18"; level: MonitorEnums.EventLevel.Info; message: "Camera 02 stream connected" }
+        ListElement { time: "13:12:43"; level: MonitorEnums.EventLevel.Warn; message: "Camera 03 signal unstable" }
     }
 
     property int selectedCamera: 0
@@ -54,8 +54,8 @@ ApplicationWindow {
 
         var camera = cameraModel.get(index).camera
         selectedCamera = index
-        warning = cameraModel.get(index).cameraState === "WARNING"
-        addEvent("INFO", camera + " selected")
+        warning = cameraModel.get(index).cameraState === MonitorEnums.CameraState.Warning
+        addEvent(MonitorEnums.EventLevel.Info, camera + " selected")
     }
 
     function setWarning(value) {
@@ -63,8 +63,9 @@ ApplicationWindow {
             return
 
         warning = value
-        cameraModel.setProperty(selectedCamera, "cameraState", value ? "WARNING" : "NORMAL")
-        addEvent(value ? "WARN" : "INFO",
+        cameraModel.setProperty(selectedCamera, "cameraState",
+                                value ? MonitorEnums.CameraState.Warning : MonitorEnums.CameraState.Normal)
+        addEvent(value ? MonitorEnums.EventLevel.Warn : MonitorEnums.EventLevel.Info,
                  cameraName + (value ? " warning detected" : " returned to normal"))
     }
 
@@ -262,7 +263,7 @@ ApplicationWindow {
 
                         label: camera
                         normalColor: index === window.selectedCamera ? colors.buttonNormal :
-                                     cameraState === "WARNING" ? colors.buttonWarning : colors.buttonPressed
+                                     cameraState === MonitorEnums.CameraState.Warning ? colors.buttonWarning : colors.buttonPressed
                         pressedColor: colors.buttonPressed
                         textColor: colors.textPrimary
                         onClicked: window.selectCamera(index)

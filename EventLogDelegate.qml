@@ -9,6 +9,8 @@ Rectangle {
     color: index % 2 === 0 ? "#222831" : "#252b34"
 
 
+    readonly property string levelText: level === MonitorEnums.EventLevel.Warn ? "WARN" : "INFO"
+
     RowLayout {
         anchors.fill: parent
         anchors.margins: 8
@@ -19,11 +21,11 @@ Rectangle {
             Layout.preferredHeight: 24
             Layout.alignment: Qt.AlignVCenter
             radius: 3
-            color: level === "WARN" ? "#d94848" : "#2f6f9e"
+            color: level === MonitorEnums.EventLevel.Warn ? "#d94848" : "#2f6f9e"
 
             Text {
                 anchors.centerIn: parent
-                text: level
+                text: root.levelText
                 color: "white"
                 font.pixelSize: 11
                 font.bold: true
