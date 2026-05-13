@@ -19,12 +19,9 @@ ApplicationWindow {
         ListElement { camera: "Camera 03"; location: "Line C"; cameraState: MonitorEnums.CameraState.Warning }
     }
 
-    ListModel {
+    EventLogModel {
         id: eventLogModel
-
-        ListElement { time: "13:00:00"; level: MonitorEnums.EventLevel.Info; message: "Camera 01 stream connected" }
-        ListElement { time: "13:04:18"; level: MonitorEnums.EventLevel.Info; message: "Camera 02 stream connected" }
-        ListElement { time: "13:12:43"; level: MonitorEnums.EventLevel.Warn; message: "Camera 03 signal unstable" }
+        maxCount: 8
     }
 
     property int selectedCamera: 0
@@ -70,14 +67,7 @@ ApplicationWindow {
     }
 
     function addEvent(level, message) {
-        eventLogModel.insert(0, {
-            "time": Qt.formatTime(new Date(), "hh:mm:ss"),
-            "level": level,
-            "message": message
-        })
-
-        if (eventLogModel.count > 8)
-            eventLogModel.remove(eventLogModel.count - 1)
+        eventLogModel.addEvent(level, message)
     }
 
     Rectangle {
@@ -209,7 +199,6 @@ ApplicationWindow {
                     Layout.fillHeight: true
                     sourceComponent: component_videoArea
                 }
-
 
                 ColumnLayout {
                     Layout.fillWidth: false
