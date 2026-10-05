@@ -1,0 +1,11 @@
+# 이 레포는 Linux 와 Windows 를 왕복한다. 줄바꿈은 저장소에서 LF 로 통일한다.
+* text=auto eol=lf
+
+
+# 바이너리
+*.png binary
+*.jpg binary
+*.mp4 binary
+*.webp binary
+*.qch binary
+*.qsb binary
