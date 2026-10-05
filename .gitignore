@@ -82,3 +82,6 @@ CMakeLists.txt.user*
 .uic/
 /build*/
 /.qtcreator/
+
+# 훅 기록 (사실 기록, 저장소에 넣지 않음)
+.claude/hook-log.md

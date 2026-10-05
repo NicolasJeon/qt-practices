@@ -1,0 +1,59 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(qmllint:*)",
+      "Bash(qmlformat:*)",
+      "Bash(qmlls:*)",
+      "Bash(qmltestrunner:*)",
+      "Bash(qmlprofiler:*)",
+      "Bash(qml:*)",
+      "Bash(cmake:*)",
+      "Bash(ctest:*)",
+      "Bash(ninja:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(python tools/qdoc.py:*)",
+      "Bash(python3 tools/qdoc.py:*)",
+      "_주석: 아래부터는 승인 창을 줄이려고 넓힌 규칙이다. 위 규칙은 '이 낱말로 시작하면' 만 걸려서, 에이전트가 'C:/Qt/.../qmllint.exe' 처럼 절대경로로 부르면 빗나간다(실측: 같은 명령이 'Bash(qmllint:*)' 에서는 승인 거부, 'Bash(*qmllint*)' 에서는 그냥 실행). 엄격하게 쓰려면 이 블록만 지우면 된다 — 동작은 같고 승인 창이 자주 뜰 뿐이다. rm 과 git push 는 아래 ask 에 그대로 남는다.",
+      "Bash(*qmllint*)",
+      "Bash(*qmlformat*)",
+      "Bash(*qmlls*)",
+      "Bash(*qmltestrunner*)",
+      "Bash(*qmlprofiler*)",
+      "Bash(*qml.exe*)",
+      "Bash(*cmake*)",
+      "Bash(*ctest*)",
+      "Bash(*ninja*)",
+      "_주석: 스킬 패키지가 들고 오는 검사 스크립트 네 개. 플러그인 설치 경로에 있어서 위 규칙으로는 안 걸린다.",
+      "Bash(*qt_review_lint.py*)",
+      "Bash(*qt_qml_lint.py*)",
+      "Bash(*parse-qmlprofiler-trace.py*)",
+      "Bash(*parse-qmltestrunner-output.py*)",
+      "_주석: 빌드 산출물. 테스트 바이너리를 직접 실행할 때 쓴다.",
+      "Bash(./build/*)",
+      "Bash(*/build/tests/*)",
+      "mcp__qt-docs__qt_documentation_search",
+      "mcp__qt-docs__qt_documentation_read"
+    ],
+    "ask": [
+      "Bash(git push:*)",
+      "Bash(rm:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR/.claude/hooks/qml-check.sh\"",
+            "timeout": 30,
+            "statusMessage": "qmlformat + qmllint"
+          }
+        ]
+      }
+    ]
+  }
+}
