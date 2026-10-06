@@ -1,0 +1,19 @@
+{
+  "description": "Format and lint QML after Codex apply_patch edits.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "^(apply_patch|Edit|Write)$",
+        "hooks": [
+          {
+            "additionalContextLimit": 8000,
+            "type": "command",
+            "statusMessage": "qmlformat + qmllint",
+            "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"& (Join-Path (git rev-parse --show-toplevel) '.codex/hooks/qmllint-post.ps1')\"",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
+}
