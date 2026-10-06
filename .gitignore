@@ -88,3 +88,6 @@ CMakeLists.txt.user*
 
 # 스킬 기록 훅이 남기는 파일 (사실 기록, 저장소에 넣지 않음)
 .claude/skill-log.md
+
+# Codex hook execution log
+.codex/hook-log.md
