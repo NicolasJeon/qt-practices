@@ -9,8 +9,9 @@
             "additionalContextLimit": 8000,
             "type": "command",
             "statusMessage": "qmlformat + qmllint",
-            "command": "powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"& (Join-Path (git rev-parse --show-toplevel) '.codex/hooks/qmllint-post.ps1')\"",
-            "timeout": 60
+            "command": "python3 -c \"import pathlib,runpy; cwd=pathlib.Path.cwd(); p=next(p for d in [cwd,*cwd.parents] if (p:=d/'.codex/hooks/qmllint-post.py').is_file()); runpy.run_path(str(p),run_name='__main__')\"",
+            "timeout": 120,
+            "commandWindows": "python -c \"import pathlib,runpy; cwd=pathlib.Path.cwd(); p=next(p for d in [cwd,*cwd.parents] if (p:=d/'.codex/hooks/qmllint-post.py').is_file()); runpy.run_path(str(p),run_name='__main__')\""
           }
         ]
       }

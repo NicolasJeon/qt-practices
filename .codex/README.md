@@ -1,28 +1,26 @@
-# Codex QML hook (Windows)
+# Codex QML hook (Windows / macOS / Linux)
 
-This branch includes `.codex/hooks.json` and a PowerShell PostToolUse handler.
-After an `apply_patch` edit, it formats changed QML with qmlformat and runs qmllint.
-Shell edits and manual editor saves do not trigger this handler.
+Requires Python 3.8+ (standard library only) and Qt 6.11+.
+Windows: make `python` available in PATH. macOS/Linux: use `python3`.
+Set QT_BIN_DIR to the Qt kit's bin directory before starting Codex to select a kit.
+Otherwise the handler searches PATH and common Qt installation directories.
 
-Use Qt 6.11 or newer for this project's `.qmllint.ini` policy.
-Set QT_BIN_DIR to your Qt kit's bin directory before starting Codex if necessary.
-The hook also searches PATH, C:/Qt_eval, C:/Qt and ~/Qt.
+PostToolUse handles apply_patch edits, formats changed QML and returns lint
+warnings to Codex. Manual saves and shell edits do not trigger this handler.
+CMake response files in build/**/.rcc/qmllint are reused when available.
+The hook log is `.codex/hook-log.md` (ignored by Git).
 
-Start Codex in this trusted clone. Versions with hook support require review and
-trust of the hook definition; the documented CLI interface is `/hooks`.
-If your client has no hook support or trust interface, files alone do not activate
-this hook. Manual validation below only verifies the handler, not automatic loading.
+Start Codex in the clone or a subdirectory. The launcher finds the script by
+walking parent directories; there are no machine-specific repository paths.
+Codex must support hooks and trust the project/hook definition before automatic
+execution. The documented CLI review interface is `/hooks`, when available.
+If your client does not support it, files alone do not activate the hook.
 
-## Manual smoke test (PowerShell, from clone root)
+To test the handler manually, pipe a PostToolUse JSON event with cwd,
+tool_name=apply_patch and tool_input.command containing patch headers into:
 
-```powershell
-@{cwd=(Get-Location).Path; tool_name='apply_patch'; tool_input=@{
-  command="*** Begin Patch`n*** Update File: Main.qml`n*** End Patch"
-}} | ConvertTo-Json -Depth 4 |
-  powershell.exe -NoProfile -ExecutionPolicy Bypass -File .codex/hooks/qmllint-post.ps1
-```
+    python .codex/hooks/qmllint-post.py
 
-This formats Main.qml in place. Check `git diff` and `.codex/hook-log.md`.
-For automatic verification, ask Codex to edit a QML file through apply_patch and
-check that a fresh hook-log entry appears without manually invoking the script.
-CMake-generated .rcc/qmllint response files are reused when available in build/.
+Use python3 on macOS/Linux. This formats the referenced QML files in place.
+Manual execution verifies the script only. To verify automatic execution,
+make a Codex apply_patch QML edit and check for a fresh hook-log entry.
