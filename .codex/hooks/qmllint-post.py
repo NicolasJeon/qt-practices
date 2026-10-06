@@ -75,7 +75,8 @@ def lint(file, root, tool):
             flags = [t for t in tokens if not qml_path(t)]
             with tempfile.TemporaryDirectory(prefix="codex-qmllint-") as directory:
                 temporary = Path(directory) / "file.rsp"
-                temporary.write_text("\n".join(flags + [json.dumps(file.as_posix())]), encoding="utf-8")
+                # Qt response files use one literal argument per line, including spaces.
+                temporary.write_text("\n".join(flags + [file.as_posix()]), encoding="utf-8")
                 return run([tool, "@" + str(temporary)], root)
     return run([tool, *(["-I", build] if build else []), file], root)
 
